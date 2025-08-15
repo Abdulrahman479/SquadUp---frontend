@@ -10,7 +10,7 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/signup', { email, password });
+      await axios.post('https://squad-up-backend.vercel.app/api/auth/signup', { email, password });
       alert('Signup successful! Please login.');
       navigate('/');
     } catch (error) {

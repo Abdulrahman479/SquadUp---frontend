@@ -14,7 +14,7 @@ function Login() {
     console.log('Login form submitted:', { email, password });  // Debug log
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const res = await axios.post('https://squad-up-backend.vercel.app/api/auth/login', { email, password });
       console.log('Login response:', res.data); // Debug log
       login(res.data.token); // Save token in context
       navigate('/dashboard'); // Redirect after login

@@ -12,7 +12,7 @@ async function fetchHostedGames() {
   try {
     const token = localStorage.getItem('token'); // Or get it from your auth context
 
-    const res = await axiosInstance.get('http://localhost:5000/api/games/hosted', {
+    const res = await axiosInstance.get('https://squad-up-backend.vercel.app/api/games/hosted', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

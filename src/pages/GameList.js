@@ -13,7 +13,7 @@ function GamesList() {
   const token = localStorage.getItem("token"); // Assumes token is saved after login
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/games")
+    fetch("https://squad-up-backend.vercel.app/api/games")
       .then(res => res.json())
       .then(data => setGames(data))
       .catch(err => alert('Failed to fetch games'));
@@ -26,7 +26,7 @@ function GamesList() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/api/games/register", {
+      const response = await fetch("https://squad-up-backend.vercel.app/api/games/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

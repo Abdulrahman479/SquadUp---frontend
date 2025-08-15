@@ -47,7 +47,7 @@ function HostGame() {
 
       const token = localStorage.getItem('token'); // Get token from localStorage
 
-      const response = await axios.post('http://localhost:5000/api/games/host', hostGameData, {
+      const response = await axios.post('https://squad-up-backend.vercel.app/api/games/host', hostGameData, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to headers
         },

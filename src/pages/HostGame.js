@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function HostGame() {
+  const navigate = useNavigate();
+
   const [sport, setSport] = useState('');
   const [playersNeeded, setPlayersNeeded] = useState('');
   const [hostName, setHostName] = useState('');
@@ -13,8 +16,14 @@ function HostGame() {
   const [totalAmount, setTotalAmount] = useState('');
   const [contactNumber, setContactNumber] = useState('');
 
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setErrorMessage('');
+    setSuccessMessage('');
 
     if (
       !sport ||
@@ -27,7 +36,7 @@ function HostGame() {
       !totalAmount ||
       !contactNumber
     ) {
-      alert('Please fill all required fields');
+      setErrorMessage('Please fill all required fields');
       return;
     }
 
@@ -45,36 +54,64 @@ function HostGame() {
         contactNumber,
       };
 
-      const token = localStorage.getItem('token'); // Get token from localStorage
+      const token = localStorage.getItem('token');
 
-      const response = await axios.post('https://squad-up-backend.vercel.app/api/games/host', hostGameData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add token to headers
-        },
-      });
+      await axios.post(
+        'https://squad-up-backend.vercel.app/api/games/host',
+        hostGameData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-   
-        alert('Game hosted successfully!');
-        // Clear form
-        setSport('');
-        setPlayersNeeded('');
-        setHostName('');
-        setVenue('');
-        setLocationLink('');
-        setDate('');
-        setTime('');
-        setPerHeadCost('');
-        setTotalAmount('');
-        setContactNumber('');
+      // ✅ Show success message
+      setSuccessMessage('Game hosted successfully! Redirecting...');
+
+      // ✅ Clear form
+      setSport('');
+      setPlayersNeeded('');
+      setHostName('');
+      setVenue('');
+      setLocationLink('');
+      setDate('');
+      setTime('');
+      setPerHeadCost('');
+      setTotalAmount('');
+      setContactNumber('');
+
+      // ✅ Redirect after 1.5 seconds
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
 
     } catch (error) {
-      alert('Error hosting game: ' + (error.response?.data?.message || error.message));
+      setErrorMessage(
+        'Error hosting game: ' +
+          (error.response?.data?.message || error.message)
+      );
     }
   };
 
   return (
     <div style={{ maxWidth: 600, margin: 'auto', padding: 20 }}>
       <h2>Host a Game</h2>
+
+      {/* ✅ Success Message */}
+      {successMessage && (
+        <div style={{ background: '#d4edda', color: '#155724', padding: 10, marginBottom: 15 }}>
+          {successMessage}
+        </div>
+      )}
+
+      {/* ❌ Error Message */}
+      {errorMessage && (
+        <div style={{ background: '#f8d7da', color: '#721c24', padding: 10, marginBottom: 15 }}>
+          {errorMessage}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         <label>Sport*</label><br />
         <select value={sport} onChange={e => setSport(e.target.value)} required>
@@ -162,7 +199,9 @@ function HostGame() {
           required
         /><br /><br />
 
-        <button type="submit" style={{ padding: 10, width: '100%' }}>Host Game</button>
+        <button type="submit" style={{ padding: 10, width: '100%' }}>
+          Host Game
+        </button>
       </form>
     </div>
   );

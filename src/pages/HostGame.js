@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function HostGame() {
   const navigate = useNavigate();
@@ -16,14 +17,8 @@ function HostGame() {
   const [totalAmount, setTotalAmount] = useState('');
   const [contactNumber, setContactNumber] = useState('');
 
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setErrorMessage('');
-    setSuccessMessage('');
 
     if (
       !sport ||
@@ -36,7 +31,7 @@ function HostGame() {
       !totalAmount ||
       !contactNumber
     ) {
-      setErrorMessage('Please fill all required fields');
+      toast.error('Please fill all required fields');
       return;
     }
 
@@ -66,10 +61,9 @@ function HostGame() {
         }
       );
 
-      // ✅ Show success message
-      setSuccessMessage('Game hosted successfully! Redirecting...');
+      toast.success('Game hosted successfully!');
 
-      // ✅ Clear form
+      // Clear form
       setSport('');
       setPlayersNeeded('');
       setHostName('');
@@ -81,15 +75,13 @@ function HostGame() {
       setTotalAmount('');
       setContactNumber('');
 
-      // ✅ Redirect after 1.5 seconds
       setTimeout(() => {
         navigate('/dashboard');
-      }, 1500);
+      }, 1000);
 
     } catch (error) {
-      setErrorMessage(
-        'Error hosting game: ' +
-          (error.response?.data?.message || error.message)
+      toast.error(
+        error.response?.data?.message || 'Error hosting game'
       );
     }
   };
@@ -97,20 +89,6 @@ function HostGame() {
   return (
     <div style={{ maxWidth: 600, margin: 'auto', padding: 20 }}>
       <h2>Host a Game</h2>
-
-      {/* ✅ Success Message */}
-      {successMessage && (
-        <div style={{ background: '#d4edda', color: '#155724', padding: 10, marginBottom: 15 }}>
-          {successMessage}
-        </div>
-      )}
-
-      {/* ❌ Error Message */}
-      {errorMessage && (
-        <div style={{ background: '#f8d7da', color: '#721c24', padding: 10, marginBottom: 15 }}>
-          {errorMessage}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit}>
         <label>Sport*</label><br />
@@ -124,80 +102,15 @@ function HostGame() {
           <option value="Volleyball">Volleyball</option>
         </select><br /><br />
 
-        <label>Number of Players Required*</label><br />
-        <input
-          type="number"
-          value={playersNeeded}
-          onChange={e => setPlayersNeeded(e.target.value)}
-          min="1"
-          required
-        /><br /><br />
-
-        <label>Host Name*</label><br />
-        <input
-          type="text"
-          value={hostName}
-          onChange={e => setHostName(e.target.value)}
-          required
-        /><br /><br />
-
-        <label>Venue Name*</label><br />
-        <input
-          type="text"
-          value={venue}
-          onChange={e => setVenue(e.target.value)}
-          required
-        /><br /><br />
-
-        <label>Location Link (Google Maps URL)</label><br />
-        <input
-          type="url"
-          value={locationLink}
-          onChange={e => setLocationLink(e.target.value)}
-          placeholder="Optional"
-        /><br /><br />
-
-        <label>Date*</label><br />
-        <input
-          type="date"
-          value={date}
-          onChange={e => setDate(e.target.value)}
-          required
-        /><br /><br />
-
-        <label>Time*</label><br />
-        <input
-          type="time"
-          value={time}
-          onChange={e => setTime(e.target.value)}
-          required
-        /><br /><br />
-
-        <label>Per Head Cost (₹)*</label><br />
-        <input
-          type="number"
-          value={perHeadCost}
-          onChange={e => setPerHeadCost(e.target.value)}
-          min="0"
-          required
-        /><br /><br />
-
-        <label>Total Amount (₹)*</label><br />
-        <input
-          type="number"
-          value={totalAmount}
-          onChange={e => setTotalAmount(e.target.value)}
-          min="0"
-          required
-        /><br /><br />
-
-        <label>Host Contact Number*</label><br />
-        <input
-          type="tel"
-          value={contactNumber}
-          onChange={e => setContactNumber(e.target.value)}
-          required
-        /><br /><br />
+        <input type="number" placeholder="Players Needed" value={playersNeeded} onChange={e => setPlayersNeeded(e.target.value)} required /><br /><br />
+        <input type="text" placeholder="Host Name" value={hostName} onChange={e => setHostName(e.target.value)} required /><br /><br />
+        <input type="text" placeholder="Venue" value={venue} onChange={e => setVenue(e.target.value)} required /><br /><br />
+        <input type="url" placeholder="Location Link (Optional)" value={locationLink} onChange={e => setLocationLink(e.target.value)} /><br /><br />
+        <input type="date" value={date} onChange={e => setDate(e.target.value)} required /><br /><br />
+        <input type="time" value={time} onChange={e => setTime(e.target.value)} required /><br /><br />
+        <input type="number" placeholder="Per Head Cost" value={perHeadCost} onChange={e => setPerHeadCost(e.target.value)} required /><br /><br />
+        <input type="number" placeholder="Total Amount" value={totalAmount} onChange={e => setTotalAmount(e.target.value)} required /><br /><br />
+        <input type="tel" placeholder="Contact Number" value={contactNumber} onChange={e => setContactNumber(e.target.value)} required /><br /><br />
 
         <button type="submit" style={{ padding: 10, width: '100%' }}>
           Host Game

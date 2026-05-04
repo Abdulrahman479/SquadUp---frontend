@@ -10,55 +10,60 @@ import MyHostedGames from './pages/MyHostedGames';
 import MyJoinedGames from './pages/MyJoinedGames';
 
 import PrivateRoute from './components/PrivateRoute';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+    <>
+      {/* ✅ Add this */}
+      <Toaster position="top-right" reverseOrder={false} />
 
-      {/* Protected routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/host-game"
-        element={
-          <PrivateRoute>
-            <HostGame />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/join"
-        element={
-          <PrivateRoute>
-            <JoinGame />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/my-hosted-games"
-        element={
-          <PrivateRoute>
-            <MyHostedGames />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/my-joined-games"
-        element={
-          <PrivateRoute>
-            <MyJoinedGames />
-          </PrivateRoute>
-        }
-      />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/host-game"
+          element={
+            <PrivateRoute>
+              <HostGame />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/join"
+          element={
+            <PrivateRoute>
+              <JoinGame />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-hosted-games"
+          element={
+            <PrivateRoute>
+              <MyHostedGames />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-joined-games"
+          element={
+            <PrivateRoute>
+              <MyJoinedGames />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

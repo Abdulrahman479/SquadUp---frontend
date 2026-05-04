@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 const sportsList = [
   'All',
@@ -12,17 +13,21 @@ const sportsList = [
 ];
 
 function JoinGame() {
+  const navigate = useNavigate();
+
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
   const [selectedSport, setSelectedSport] = useState('All');
 
-  // For registration modal
   const [showRegister, setShowRegister] = useState(false);
   const [registeringGameId, setRegisteringGameId] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [playerNumber, setPlayerNumber] = useState('');
   const [playerAge, setPlayerAge] = useState('');
   const [playerPosition, setPlayerPosition] = useState('');
+
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     fetchGames();
@@ -38,10 +43,10 @@ function JoinGame() {
 
   async function fetchGames() {
     try {
-      const res = await axiosInstance.get('/games'); // Auth header included automatically
+      const res = await axiosInstance.get('/games');
       setGames(res.data);
     } catch (error) {
-      alert('Failed to fetch games: ' + (error.response?.data?.message || error.message));
+      setErrorMessage('Failed to fetch games');
     }
   }
 
@@ -61,8 +66,11 @@ function JoinGame() {
   async function handleRegister(e) {
     e.preventDefault();
 
+    setErrorMessage('');
+    setSuccessMessage('');
+
     if (!playerName || !playerNumber || !playerAge) {
-      alert('Please fill all required fields');
+      setErrorMessage('Please fill all required fields');
       return;
     }
 
@@ -78,20 +86,45 @@ function JoinGame() {
       const res = await axiosInstance.post('/games/register', registrationData);
 
       if (res.status === 200) {
-        alert('Registered successfully!');
+        setSuccessMessage('Joined successfully! Redirecting...');
+
         closeRegisterModal();
+
+        // Optional: refresh games before leaving
         fetchGames();
+
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+
       } else {
-        alert('Registration failed');
+        setErrorMessage('Registration failed');
       }
+
     } catch (error) {
-      alert('Error registering: ' + (error.response?.data?.message || error.message));
+      setErrorMessage(
+        'Error: ' + (error.response?.data?.message || error.message)
+      );
     }
   }
 
   return (
     <div style={{ maxWidth: 800, margin: 'auto', padding: 20 }}>
       <h2>Join a Game</h2>
+
+      {/* ✅ Success Message */}
+      {successMessage && (
+        <div style={{ background: '#d4edda', color: '#155724', padding: 10, marginBottom: 15 }}>
+          {successMessage}
+        </div>
+      )}
+
+      {/* ❌ Error Message */}
+      {errorMessage && (
+        <div style={{ background: '#f8d7da', color: '#721c24', padding: 10, marginBottom: 15 }}>
+          {errorMessage}
+        </div>
+      )}
 
       <label>Filter by Sport:</label>
       <select
@@ -115,6 +148,7 @@ function JoinGame() {
             <p><strong>Date:</strong> {game.date}</p>
             <p><strong>Time:</strong> {game.time}</p>
             <p><strong>Venue:</strong> {game.venue}</p>
+
             {game.locationLink && (
               <p>
                 <strong>Location: </strong>
@@ -123,6 +157,7 @@ function JoinGame() {
                 </a>
               </p>
             )}
+
             <p><strong>Host:</strong> {game.hostName} | <strong>Contact:</strong> {game.contactNumber}</p>
             <p>
               <strong>Players Joined:</strong> {game.playersJoined?.length || 0} / {game.playersNeeded}
@@ -149,42 +184,48 @@ function JoinGame() {
         }}>
           <div style={{ backgroundColor: 'white', padding: 20, borderRadius: 5, width: 400 }}>
             <h3>Register for Game</h3>
+
             <form onSubmit={handleRegister}>
-              <label>Name*</label><br />
               <input
                 type="text"
+                placeholder="Name"
                 value={playerName}
                 onChange={e => setPlayerName(e.target.value)}
                 required
                 style={{ width: '100%', marginBottom: 10 }}
               />
-              <label>Contact Number*</label><br />
+
               <input
                 type="tel"
+                placeholder="Contact Number"
                 value={playerNumber}
                 onChange={e => setPlayerNumber(e.target.value)}
                 required
                 style={{ width: '100%', marginBottom: 10 }}
               />
-              <label>Age*</label><br />
+
               <input
                 type="number"
+                placeholder="Age"
                 value={playerAge}
                 onChange={e => setPlayerAge(e.target.value)}
                 required
                 style={{ width: '100%', marginBottom: 10 }}
               />
-              <label>Position (Optional)</label><br />
+
               <input
                 type="text"
+                placeholder="Position (Optional)"
                 value={playerPosition}
                 onChange={e => setPlayerPosition(e.target.value)}
                 style={{ width: '100%', marginBottom: 10 }}
               />
+
               <button type="submit" style={{ padding: 10, width: '100%' }}>
                 Register
               </button>
             </form>
+
             <button onClick={closeRegisterModal} style={{ marginTop: 10 }}>
               Cancel
             </button>
